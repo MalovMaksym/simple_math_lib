@@ -1,6 +1,8 @@
 #define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include <gtest/gtest.h>
 #include <fstream>
+#include <vector>
+#include <algorithm>
 #include "math_lib.h"
 
 class MathLibTestFixture : public ::testing::Test
@@ -76,4 +78,43 @@ TEST_F(MathLibTestFixture, IsPrimeTest)
 TEST_F(MathLibTestFixture, GreatestCommonDivider)
 {
     EXPECT_EQ(MathLib::GCD(10, 6), 2);
+}
+
+TEST_F(MathLibTestFixture, SolveQuadraticTwoRoots)
+{
+    // x^2 - 5x + 6 = 0 -> x = 2, x = 3
+    std::vector<double> roots = MathLib::solveQuadratic(1.0, -5.0, 6.0);
+    ASSERT_EQ(roots.size(), 2);
+    std::sort(roots.begin(), roots.end());
+    EXPECT_TRUE(MathLib::isEqual(roots[0], 2.0, 0.001));
+    EXPECT_TRUE(MathLib::isEqual(roots[1], 3.0, 0.001));
+}
+
+TEST_F(MathLibTestFixture, SolveQuadraticOneRoot)
+{
+    // x^2 - 4x + 4 = 0 -> x = 2
+    std::vector<double> roots = MathLib::solveQuadratic(1.0, -4.0, 4.0);
+    ASSERT_EQ(roots.size(), 1);
+    EXPECT_TRUE(MathLib::isEqual(roots[0], 2.0, 0.001));
+}
+
+TEST_F(MathLibTestFixture, SolveQuadraticNoRoots)
+{
+    // x^2 + x + 5 = 0 -> D < 0
+    std::vector<double> roots = MathLib::solveQuadratic(1.0, 1.0, 5.0);
+    EXPECT_TRUE(roots.empty());
+}
+
+TEST_F(MathLibTestFixture, SolveQuadraticLinearEquation)
+{
+    // 0*x^2 + 2x - 8 = 0 -> x = 4
+    std::vector<double> roots = MathLib::solveQuadratic(0.0, 2.0, -8.0);
+    ASSERT_EQ(roots.size(), 1);
+    EXPECT_TRUE(MathLib::isEqual(roots[0], 4.0, 0.001));
+}
+
+TEST_F(MathLibTestFixture, SolveQuadraticInfiniteSolutions)
+{
+    // 0*x^2 + 0*x + 0 = 0 -> кидає std::invalid_argument
+    EXPECT_THROW(MathLib::solveQuadratic(0.0, 0.0, 0.0), std::invalid_argument);
 }
