@@ -42,5 +42,36 @@ namespace MathLib
 		if (b == 0) return a;
 		return GCD(b, a % b);
 	}
-}
 
+    std::vector<double> solveQuadratic(double a, double b, double c)
+    {
+        if (isEqual(a, 0.0))
+        {
+            if (isEqual(b, 0.0))
+            {
+                if (isEqual(c, 0.0))
+                {
+                    throw std::invalid_argument("Infinite number of solutions (0 == 0).");
+                }
+                return {};
+            }
+            return { -c / b };
+        }
+        double discriminant = (b * b) - (4.0 * a * c);
+        if (isEqual(discriminant, 0.0))
+        {
+            return { -b / (2.0 * a) };
+        }
+        else if (discriminant < 0.0)
+        {
+            return {};
+        }
+        else
+        {
+            double sqrtD = MathLib::sqrt(discriminant);
+            double x1 = (-b - sqrtD) / (2.0 * a);
+            double x2 = (-b + sqrtD) / (2.0 * a);
+            return { x1, x2 };
+        }
+    }
+}
